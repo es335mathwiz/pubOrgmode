@@ -1,0 +1,2 @@
+# pubOrgmode
+sharable orgmode files
