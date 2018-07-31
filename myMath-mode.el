@@ -1,7 +1,7 @@
-;;; julia-mode.el --- Major mode for editing Julia source code
+;;; myMath-mode.el --- Major mode for editing MyMath source code
 
-;; Copyright (C) 2009-2014 Julia contributors
-;; URL: https://github.com/JuliaLang/julia
+;; Copyright (C) 2009-2014 MyMath contributors
+;; URL: https://github.com/MyMathLang/myMath
 ;; Version: 0.3
 ;; Keywords: languages
 
@@ -62,7 +62,7 @@
 
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.jl\\'" . myMath-mode))
+(add-to-list 'auto-mode-alist '("\\.mth\\'" . myMath-mode))
 
 ;; define ignore-errors macro if it isn't present
 ;; (necessary for emacs 22 compatibility)
@@ -3190,7 +3190,9 @@ y2 = g(x)"))
 ;; Code for `inferior-myMath-mode'
 (require 'comint)
 
-(defcustom myMath-program "math -noprompt "
+(defcustom myMath-program "/msu/home/m1gsa00/bin/tryMath.sh"
+;;(defcustom myMath-program "math"
+;;(defcustom myMath-program "/opt/local/bin/julia"
   "Path to the program used by `inferior-myMath'."
   :type 'string
   :group 'myMath)
@@ -3200,7 +3202,7 @@ y2 = g(x)"))
   :type 'string
   :group 'myMath)
 
-(defvar myMath-prompt-regexp "myMath>"
+(defvar myMath-prompt-regexp "In.[0-9]+.:="
   "Regexp for matching `inferior-myMath' prompt.")
 
 (defvar inferior-myMath-mode-map
@@ -3214,6 +3216,8 @@ y2 = g(x)"))
 (defun inferior-myMath ()
     "Run an inferior instance of `myMath' inside Emacs."
     (interactive)
+(message "got to inferior-myMath")
+(message "got here myMath")
     (let ((myMath-program myMath-program)
           (buffer (get-buffer-create "*MyMath*")))
       (when (not (comint-check-proc "*MyMath*"))
@@ -3222,6 +3226,7 @@ y2 = g(x)"))
       (inferior-myMath-mode)))
 
 (defun inferior-myMath--initialize ()
+(message "got to initialize")
     "Helper function to initialize `inferior-myMath'."
     (setq comint-use-prompt-regexp t))
 

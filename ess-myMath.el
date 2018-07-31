@@ -59,7 +59,7 @@
 (defun ess-myMath-send-string-function (process string visibly)
   "Send the MyMath STRING to the PROCESS.
 VISIBLY is not currently used."
-  (let ((file (concat temporary-file-directory "myMath_eval_region.jl")))
+  (let ((file (concat temporary-file-directory "myMath_eval_region.mth")))
     (with-temp-file file
       (insert string))
     (process-send-string process (format ess-load-command file))))
@@ -297,9 +297,9 @@ to look up any doc strings."
 (defvar ess-myMath-customize-alist
   '((comint-use-prompt-regexp      . t)
     (ess-eldoc-function            . 'ess-myMath-eldoc-function)
-    (inferior-ess-primary-prompt   . "a> ") ;; from myMath>
+    (inferior-ess-primary-prompt   . ".*:=") ;; from myMath>
     (inferior-ess-secondary-prompt . nil)
-    (inferior-ess-prompt           . "\\w*> ")
+    (inferior-ess-prompt           . ":=")
     (ess-local-customize-alist     . 'ess-myMath-customize-alist)
     (inferior-ess-program          . inferior-myMath-program-name)
     (ess-get-help-topics-function  . 'ess-myMath-get-help-topics)
@@ -320,7 +320,7 @@ to look up any doc strings."
     ;; (inferior-ess-help-command       . "help(\"%s\")\n")
     (ess-language                  . "myMath")
     (ess-dialect                   . "myMath")
-    (ess-suffix                    . "jl")
+    (ess-suffix                    . "mth")
     (ess-ac-sources                . '(ac-source-ess-myMath-objects))
     (ess-company-backends          . '(company-ess-myMath-objects))
     (ess-dump-filename-template    . (replace-regexp-in-string
@@ -332,7 +332,7 @@ to look up any doc strings."
     (ess-help-sec-keys-alist       . ess-help-r-sec-keys-alist)
     (ess-loop-timeout              . ess-S-loop-timeout);fixme: dialect spec.
     (ess-function-pattern          . ess-r-function-pattern)
-    (ess-object-name-db-file       . "ess-jl-namedb.el" )
+    (ess-object-name-db-file       . "ess-mth-namedb.el" )
     (ess-smart-operators           . ess-r-smart-operators)
     (inferior-ess-help-filetype    . nil)
     (inferior-ess-exit-command     . "exit()\n")
@@ -376,7 +376,7 @@ It makes underscores and dots word constituent chars.")
 
   (set (make-local-variable 'ess-myMath-basic-offset) 4)
   (setq imenu-generic-expression ess-myMath-imenu-generic-expression)
-  (imenu-add-to-menubar "Imenu-jl")
+  (imenu-add-to-menubar "Imenu-mth")
   (run-hooks 'ess-myMath-mode-hook))
 
 (defvar ess-myMath-mode-hook nil)
@@ -391,6 +391,7 @@ Optional prefix (C-u) allows to set command line arguments, such as
 If you have certain command line arguments that should always be passed
 to myMath, put them in the variable `inferior-myMath-args'."
   (interactive "P")
+(message "inessmymathel defunmymath")
   ;; get settings, notably inferior-myMath-program-name :
   (if (null inferior-myMath-program-name)
       (error "'inferior-myMath-program-name' does not point to 'myMath' or 'myMath-basic' executable")
@@ -399,7 +400,8 @@ to myMath, put them in the variable `inferior-myMath-args'."
      (format
       "\n(myMath): ess-dialect=%s, buf=%s, start-arg=%s\n current-prefix-arg=%s\n"
       ess-dialect (current-buffer) start-args current-prefix-arg))
-    (let* ((jl-start-args
+(message "progress defunmymath")
+    (let* ((mth-start-args
 	    (concat inferior-myMath-args " " ; add space just in case
 		    (if start-args
 			(read-string
@@ -408,15 +410,19 @@ to myMath, put them in the variable `inferior-myMath-args'."
                                      (concat " [other than '" inferior-myMath-args "']"))
                                  " ? "))
 		      nil))))
-      (inferior-ess jl-start-args)
+(message "before inferior-ess")
+(print  mth-start-args)
+      (inferior-ess mth-start-args)
+(message "after inferior-ess")
 
       (remove-hook 'completion-at-point-functions 'ess-filename-completion 'local) ;; should be first
       (add-hook 'completion-at-point-functions 'ess-myMath-object-completion nil 'local)
       (add-hook 'completion-at-point-functions 'ess-filename-completion nil 'local)
       (add-hook 'completion-at-point-functions 'ess-myMath-latexsub-completion nil 'local)
       (setq comint-input-sender 'ess-myMath-input-sender)
-
+(message "beforer esstbstart")
       (ess--tb-start)
+(message "after esstbstart")
       (set (make-local-variable 'ess-myMath-basic-offset) 4)
       ;; remove ` from myMath's logo
       (goto-char (point-min))
@@ -428,13 +434,13 @@ to myMath, put them in the variable `inferior-myMath-args'."
       (when (re-search-forward "(" nil t)
         (replace-match "|"))
       (goto-char (point-max))
-      ;; --> myMath helpers from ../etc/ess-myMath.jl :
-;;      (ess--inject-code-from-file (format "%sess-myMath.jl" ess-etc-directory))
+      ;; --> myMath helpers from ../etc/ess-myMath.mth :
+;;      (ess--inject-code-from-file (format "%sess-myMath.mth" ess-etc-directory))
       (with-ess-process-buffer nil
         (run-mode-hooks 'ess-myMath-post-run-hook))
       )))
 
-;;(add-to-list 'auto-mode-alist '("\\.jl\\'" . ess-myMath-mode))
+;;(add-to-list 'auto-mode-alist '("\\.mth\\'" . ess-myMath-mode))
 
 
 (provide 'ess-myMath)
