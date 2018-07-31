@@ -32,7 +32,7 @@
 (require 'ob)
 (require 'wolfram-mode)
 (require 'ess-myMath)
-(load-file "/msu/scratch2/m1gsa00/git/newOrg.git/lisp/ess-myMath.el")
+(load-file "~/git/pubOrgmode/ess-myMath.el")
 (declare-function run-wolfram "ext:wolfram-mode")
 (declare-function wolfram-send-region "ext:wolfram-mode")
 
@@ -277,7 +277,7 @@ last statement in BODY, as elisp."
 
 
 
-(defcustom org-babel-myMath-command "/opt/mathematica/11.3/Executables/math -noprompt  "
+(defcustom org-babel-myMath-command "MathKernel -noprompt"
   "Name of command to use for executing myMath code."
   :group 'org-babel
   :version "24.1"
