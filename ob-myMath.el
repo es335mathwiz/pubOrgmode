@@ -205,7 +205,7 @@ last statement in BODY, as elisp."
      (let ((tmp-file (org-babel-temp-file "julia-")))
        (org-babel-comint-eval-invisibly-and-wait-for-file
 	session tmp-file
-(format org-babel-myMath-write-object-command
+(format org-babel-myMath-wrapper-method
 			       (if row-names-p "TRUE" "FALSE")
 			       (if column-names-p
 				   (if row-names-p "NA" "TRUE")
@@ -254,7 +254,7 @@ last statement in BODY, as elisp."
      (let ((tmp-file (org-babel-temp-file "myMath-")))
 (message "whatelse")
 (message 
-(format org-babel-myMath-write-object-command
+(format org-babel-myMath-wrapper-method
 			       (if row-names-p "TRUE" "FALSE")
 			       (if column-names-p
 				   (if row-names-p "NA" "TRUE")
