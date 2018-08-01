@@ -283,7 +283,7 @@ last statement in BODY, as elisp."
 
 
 
-(defcustom org-babel-myMath-command "/opt/mathematica/11.3/Executables/math -noprompt  "
+(defcustom org-babel-myMath-command "/opt/mathematica/11.3/Executables/math"
   "Name of command to use for executing myMath code."
   :group 'org-babel
   :version "24.1"

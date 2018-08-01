@@ -3191,6 +3191,7 @@ y2 = g(x)"))
 (require 'comint)
 
 (defcustom myMath-program "/msu/home/m1gsa00/bin/tryMath.sh"
+;;(defcustom myMath-program "/msu/home/m1gsa00/bin/tryMatlab.sh"
 ;;(defcustom myMath-program "math"
 ;;(defcustom myMath-program "/opt/local/bin/julia"
   "Path to the program used by `inferior-myMath'."
@@ -3202,7 +3203,7 @@ y2 = g(x)"))
   :type 'string
   :group 'myMath)
 
-(defvar myMath-prompt-regexp "In.[0-9]+.:="
+(defvar myMath-prompt-regexp "In\[[0-9]+\]:="
   "Regexp for matching `inferior-myMath' prompt.")
 
 (defvar inferior-myMath-mode-map

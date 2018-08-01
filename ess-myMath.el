@@ -297,9 +297,9 @@ to look up any doc strings."
 (defvar ess-myMath-customize-alist
   '((comint-use-prompt-regexp      . t)
     (ess-eldoc-function            . 'ess-myMath-eldoc-function)
-    (inferior-ess-primary-prompt   . ".*:=") ;; from myMath>
-    (inferior-ess-secondary-prompt . nil)
-    (inferior-ess-prompt           . ":=")
+    (inferior-ess-primary-prompt   . ":= ") ;; from In[1]:= myMath
+    (inferior-ess-secondary-prompt . ":= ")
+    (inferior-ess-prompt           . ":= ")
     (ess-local-customize-alist     . 'ess-myMath-customize-alist)
     (inferior-ess-program          . inferior-myMath-program-name)
     (ess-get-help-topics-function  . 'ess-myMath-get-help-topics)
@@ -335,7 +335,7 @@ to look up any doc strings."
     (ess-object-name-db-file       . "ess-mth-namedb.el" )
     (ess-smart-operators           . ess-r-smart-operators)
     (inferior-ess-help-filetype    . nil)
-    (inferior-ess-exit-command     . "exit()\n")
+    (inferior-ess-exit-command     . "Quit\n")
     ;;harmful for shell-mode's C-a: -- but "necessary" for ESS-help?
     (inferior-ess-start-file       . nil) ;; "~/.ess-R"
     (inferior-ess-start-args       . "")
@@ -343,8 +343,8 @@ to look up any doc strings."
     (ess-STERM                     . "iESS")
     (ess-editor                    . ess-r-editor)
     (ess-pager                     . ess-r-pager)
-    (ess-getwd-command             . "pwd()\n")
-    (ess-setwd-command             . "cd(expanduser(\"%s\"))\n")
+    (ess-getwd-command             . "Directory[]\n")
+    (ess-setwd-command             . "SetDirectory[expanduser(\"%s\")]\n")
     )
   "Variables to customize for MyMath -- set up later than emacs initialization.")
 

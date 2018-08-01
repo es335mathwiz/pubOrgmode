@@ -439,6 +439,7 @@ Return the 'busy state."
     busy))
 
 (defun inferior-ess-mark-as-busy (proc)
+(message "in inferior-ess-mark-as-busy")
   (process-put proc 'busy t)
   (process-put proc 'sec-prompt nil))
 
@@ -1180,20 +1181,51 @@ WAIT is non-nil wait for WAIT seconds for process output before
 the prompt check, default 0.002s. When FORCE-REDISPLAY is non-nil
 force redisplay. You better use WAIT >= 0.1 if you need
 FORCE-REDISPLAY to avoid excesive redisplay."
+(message "this is mine now waiting")
+(print wait)
+(setq sec-prompt nil)
+(print sec-prompt)
+(print proc)
+(print force-redisplay)
+(message "well well")
   (setq proc (or proc (get-process ess-local-process-name)))
   (unless (eq (process-status proc) 'run)
     (ess-error "ESS process has died unexpectedly"))
   ;; 2ms is a good default for remotes
   (setq wait (or wait 0.002))
+(setq sec-prompt nil)
+(print sec-prompt)
+(print (process-get proc 'sec-prompt))
+(print (process-get proc 'busy))
+(message "well")
+(print inferior-ess-primary-prompt)
+(setq inferior-ess-secondary-prompt ":= ")
+(print inferior-ess-secondary-prompt)
+(setq inferior-ess-secondary-prompt ":= ")
+(print inferior-ess-secondary-prompt)
+(setq somethin ":= ")
+(print somethin)
+(message "comint")
+(setq comint-prompt-regexp "^(In|Out)\[[0-9]*\]:?= *")
+(print comint-prompt-regexp)
+(message "process wait")
   (let ((start-time (float-time)))
     (save-excursion
-      (while (or (accept-process-output proc wait)
+      (while 
+(or (accept-process-output proc wait)
                  (unless (and sec-prompt (process-get proc 'sec-prompt))
                    (process-get proc 'busy)))
+;;(message "in while")
+;;(print (accept-process-output proc wait))
+;;(print sec-prompt)
+;;(print (process-get proc 'sec-prompt))
+;;(print (process-get proc 'busy))
+;;(message "after poll while")
         (when force-redisplay
           (redisplay 'force))
         (when (> (- (float-time) start-time) .5)
-          (setq wait .5))))))
+          (setq wait .5))
+))))
 
 (defun inferior-ess-ordinary-filter (proc string)
   (inferior-ess-set-status proc string t)
@@ -2157,6 +2189,7 @@ to continue it."
     (set (make-local-variable 'inhibit-field-text-motion) t))
 
   (unless inferior-ess-prompt ;; build when unset
+(message "setting in inferior-ess-prompt")
     (setq inferior-ess-prompt
           (concat "\\("
                   inferior-ess-primary-prompt
