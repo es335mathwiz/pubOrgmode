@@ -103,7 +103,7 @@ create.  Return the initialized session."
 (message "before unless")
 (print session)
   (unless (string= session "none")
-    (let ((session (or session "*wolfram*")))
+    (let ((session (or session "*myMath*")))
 (message "before if live")
 (print session)
 (print (org-babel-comint-buffer-livep session))
@@ -174,13 +174,13 @@ WriteString[\"not sure how to format\"];
 Close[theFile]]]]"
 )
 
-;;(defvar org-babel-myMath-eoe-indicator "Print[\"orgBabelEOE\"]")
-;;(defvar org-babel-myMath-eoe-output "orgBabelEOELL")
+(defvar org-babel-myMath-eoe-indicator "Print[\"orgBabelEOE\"]")
+(defvar org-babel-myMath-eoe-output "orgBabelEOELL")
 
 
 
-(defvar org-babel-myMath-eoe-indicator "print(\"org_babel_julia_eoe\")")
-(defvar org-babel-myMath-eoe-output "xxxxxxxxxxx")
+;;(defvar org-babel-myMath-eoe-indicator "Print[\"org_babel_myMath_eoe\"]")
+;;(defvar org-babel-myMath-eoe-output "org_babel_myMath_eoe")
 
 (defvar org-babel-julia-write-object-command "writecsv(\"%s\",%s)")
 
@@ -205,8 +205,14 @@ last statement in BODY, as elisp."
      (let ((tmp-file (org-babel-temp-file "julia-")))
        (org-babel-comint-eval-invisibly-and-wait-for-file
 	session tmp-file
-	(format org-babel-julia-write-object-command
-		(org-babel-process-file-name tmp-file 'noquote) "ans"))
+(format org-babel-myMath-wrapper-method
+			       (if row-names-p "TRUE" "FALSE")
+			       (if column-names-p
+				   (if row-names-p "NA" "TRUE")
+				 "FALSE")
+			       (format "Function[%s][]" body)
+			       (org-babel-process-file-name tmp-file 'noquote))
+)
        (org-babel-julia-process-value-result
 	(org-babel-result-cond result-params
 	  (with-temp-buffer
@@ -227,9 +233,9 @@ last statement in BODY, as elisp."
 		      "^\\([ ]*[>+\\.][ ]?\\)+\\([[0-9]+\\|[ ]\\)" line)
 		     (substring line (match-end 1))
 		   line))
-	       (org-babel-comint-with-output (session org-babel-julia-eoe-output)
+	       (org-babel-comint-with-output (session org-babel-myMath-eoe-output)
 		 (insert (mapconcat #'org-babel-chomp
-				    (list body org-babel-julia-eoe-indicator)
+				    (list body org-babel-myMath-eoe-indicator)
 				    "\n"))
 		 (inferior-ess-send-input)))))) "\n"))))
 
@@ -248,7 +254,7 @@ last statement in BODY, as elisp."
      (let ((tmp-file (org-babel-temp-file "myMath-")))
 (message "whatelse")
 (message 
-(format org-babel-myMath-write-object-command
+(format org-babel-myMath-wrapper-method
 			       (if row-names-p "TRUE" "FALSE")
 			       (if column-names-p
 				   (if row-names-p "NA" "TRUE")
@@ -277,7 +283,7 @@ last statement in BODY, as elisp."
 
 
 
-(defcustom org-babel-myMath-command "MathKernel -noprompt"
+(defcustom org-babel-myMath-command "math"
   "Name of command to use for executing myMath code."
   :group 'org-babel
   :version "24.1"
