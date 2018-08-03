@@ -298,8 +298,8 @@ to look up any doc strings."
   '((comint-use-prompt-regexp      . t)
     (ess-eldoc-function            . 'ess-myMath-eldoc-function)
     (inferior-ess-primary-prompt   . ":= ") ;; from In[1]:= myMath
-    (inferior-ess-secondary-prompt . ":= ")
-    (inferior-ess-prompt           . ":= ")
+    (inferior-ess-secondary-prompt . nil)
+    (inferior-ess-prompt           . "\\w*:= ")
     (ess-local-customize-alist     . 'ess-myMath-customize-alist)
     (inferior-ess-program          . inferior-myMath-program-name)
     (ess-get-help-topics-function  . 'ess-myMath-get-help-topics)

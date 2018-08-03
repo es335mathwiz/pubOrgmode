@@ -157,6 +157,10 @@ create.  Return the initialized session."
 (message "myMath-evaluate")
 (message body)
   "Evaluate myMath code in BODY."
+(print (get-buffer-process (current-buffer)))
+(message "myMath buffer process")
+(print  (current-buffer))
+(message "current buffer")
   (if session
       (org-babel-myMath-evaluate-session
        session body result-type result-params column-names-p row-names-p)
@@ -166,25 +170,33 @@ create.  Return the initialized session."
 (setq org-babel-temp-file (make-temp-file "ob-myMath"))
 
 (defconst org-babel-myMath-wrapper-method
-"With[{theRes=%s,fnOne=\"%s\",fnTwo=\"%s\"},
-If[Head[theRes]===List,Export[fnOne,theRes,\"CSV\"],
-theFile=OpenWrite[fnOne];
+"With[{rowsQ=\"%s\",colsQ=\"%s\",theResStr=\"%s\",fnName=\"%s\"},
+With[{theRes=ToExpression[theResStr]},
+If[Head[theRes]===List,Export[fnName,theRes,\"CSV\"],
+theFile=OpenWrite[fnName];
 If[Or[Head[theRes]===String,NumberQ[theRes]],WriteString[theFile,theRes],
 WriteString[\"not sure how to format\"];
-Close[theFile]]]]"
+Close[theFile]]]]]"
 )
 
 (defvar org-babel-myMath-eoe-indicator "Print[\"orgBabelEOE\"]")
-(defvar org-babel-myMath-eoe-output "orgBabelEOELL")
+(defvar org-babel-myMath-eoe-output "orgBabelEOE")
 
 
 
 ;;(defvar org-babel-myMath-eoe-indicator "Print[\"org_babel_myMath_eoe\"]")
 ;;(defvar org-babel-myMath-eoe-output "org_babel_myMath_eoe")
 
-(defvar org-babel-julia-write-object-command "writecsv(\"%s\",%s)")
 
 
+
+
+(defun org-babel-myMath-process-value-result (result column-names-p)
+  "myMath-specific processing of return value.
+Insert hline if column names in output have been requested."
+  (if column-names-p
+      (cons (car result) (cons 'hline (cdr result)))
+    result))
 
 
 (defun org-babel-myMath-evaluate-session
@@ -193,7 +205,7 @@ Close[theFile]]]]"
 If RESULT-TYPE equals 'output then return standard output as a
 string.  If RESULT-TYPE equals 'value then return the value of the
 last statement in BODY, as elisp."
-(message "this is the new code")
+(message "this is the new new code")
   (case result-type
     (value
      (with-temp-buffer
@@ -202,7 +214,7 @@ last statement in BODY, as elisp."
 	      (process-name (get-buffer-process session)))
 	     (ess-eval-visibly-p nil))
 	 (ess-eval-buffer nil)))
-     (let ((tmp-file (org-babel-temp-file "julia-")))
+     (let ((tmp-file (org-babel-temp-file "myMath<-")))
        (org-babel-comint-eval-invisibly-and-wait-for-file
 	session tmp-file
 (format org-babel-myMath-wrapper-method
@@ -213,7 +225,7 @@ last statement in BODY, as elisp."
 			       (format "Function[%s][]" body)
 			       (org-babel-process-file-name tmp-file 'noquote))
 )
-       (org-babel-julia-process-value-result
+       (org-babel-myMath-process-value-result
 	(org-babel-result-cond result-params
 	  (with-temp-buffer
 	    (insert-file-contents tmp-file)
@@ -221,6 +233,10 @@ last statement in BODY, as elisp."
 	  (org-babel-import-elisp-from-file tmp-file '(4)))
 	column-names-p)))
     (output
+     (message "learn myMath regexp")
+     (print session)
+     (message "the session")
+(print session) 
      (mapconcat
       #'org-babel-chomp
       (butlast
@@ -230,7 +246,7 @@ last statement in BODY, as elisp."
 	      (mapcar
 	       (lambda (line) ;; cleanup extra prompts left in output
 		 (if (string-match
-		      "^\\([ ]*[>+\\.][ ]?\\)+\\([[0-9]+\\|[ ]\\)" line)
+		      "^\\([ ]*[:=\\.][ ]?\\)+\\([[0-9]+\\|[ ]\\)" line)
 		     (substring line (match-end 1))
 		   line))
 	       (org-babel-comint-with-output (session org-babel-myMath-eoe-output)
